@@ -1,0 +1,42 @@
+#!/usr/bin/env wolframscript
+
+Verlet[a_,x0_,v0_,dt_,Ns_] := Module[{xout, xnext, xcur, xprev, t, index},
+ xout = Table[0.0, {i, 1, Ns}];
+ xcur = x0;
+ xprev = x0 - dt v0 + (1/2) a[x0, 0.0]dt^2;
+ t = 0.0;
+ xout[[1]] = {t, x0};
+ For[index = 2, index <= Ns, index = index + 1,
+        xnext = 2.0xcur - xprev + dt^2a[xcur, t];
+        t = t +dt;
+        xout[[index]] = {t, xnext};
+        xprev = xcur;
+        xcur = xnext;
+        ];
+	Return[xout];
+]
+
+a[x_, t_] := -x;
+x0=1.0;
+v0=0.0;
+dt=0.2;
+Ns=50;
+resultados = Verlet[a, x0, v0, dt, Ns];
+(* Gráfica *)
+ListPlot[
+ resultados,
+ Joined -> True,
+ Mesh -> All,
+ AxesLabel -> {"Tiempo (s)", "Posición (m)"},
+ PlotLabel -> "Sistema Masa-Resorte (Verlet)",
+ PlotStyle -> {Blue, Thick},
+ MeshStyle -> Red
+ ]
+
+(* Tabla *)
+Print["Tabla de resultados (primeros 5 valores):"];
+
+TableForm[
+ Take[resultados, 5],
+ TableHeadings -> {None, {"Tiempo (s)", "Posición (m)"}}
+]
